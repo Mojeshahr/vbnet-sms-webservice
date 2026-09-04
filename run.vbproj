@@ -1,0 +1,39 @@
+<!--
+  اجراکننده نمونه‌ها.
+
+  زبان VB برنامه تک‌فایلی ندارد: کامپایلرش برای هر خط کد یک فایل پروژه
+  می‌خواهد. این پروژه همان فایل است و تنها کاری که می‌کند این است که هر بار
+  دقیقاً یک نمونه را کامپایل کند و اجرا کند:
+
+      dotnet run -p:Example=examples/v3/account-info.vb
+
+  به همین دلیل EnableDefaultCompileItems خاموش است. روشن که باشد، MSBuild هر
+  یازده نمونه را با هم برمی‌دارد و یازده Module Program همنام به خطای BC30179
+  می‌خورند.
+
+  RootNamespace عمداً خالی است. VB نام پروژه را به‌عنوان فضای‌نام ریشه روی همه
+  نوع‌ها می‌گذارد، پس بدون خالی‌کردنش نقطه ورود run.Program می‌شد و
+  StartupObject زیر پیدایش نمی‌کرد.
+
+  خود نمونه‌ها به این فایل وابسته نیستند. هرکدام یک Module کامل است و داخل هر
+  پروژه Console دیگری هم بدون تغییر کار می‌کند.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace></RootNamespace>
+    <StartupObject>Program</StartupObject>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(Example)" />
+  </ItemGroup>
+
+  <Target Name="RequireExample" BeforeTargets="Build" Condition="'$(Example)' == ''">
+    <Error Text="کدام نمونه؟ مسیرش را بدهید: dotnet run -p:Example=examples/v3/account-info.vb" />
+  </Target>
+
+</Project>
